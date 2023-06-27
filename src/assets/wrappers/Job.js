@@ -54,6 +54,7 @@ const Wrapper = styled.article`
     background: #ffeeee;
   }
   .content {
+	  
     padding: 1rem 1.5rem;
   }
   .content-center {
