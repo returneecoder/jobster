@@ -1,9 +1,7 @@
-import customFetch from "../../utils/axios";
-
-import { logOutUser } from "./userSlice";
-import { clearAllJobsState } from "../allJobs/allJobsSlice";
-import { clearValues } from "../job/jobSlice";
-
+import customFetch, { checkForUnauthorizedResponse } from '../../utils/axios';
+import { clearAllJobsState } from '../allJobs/allJobsSlice';
+import { clearValues } from '../job/jobSlice';
+import { logOutUser } from './userSlice';
 export const registerUserThunk = async (url, user, thunkAPI) => {
   try {
     const resp = await customFetch.post(url, user);
@@ -24,36 +22,20 @@ export const loginUserThunk = async (url, user, thunkAPI) => {
 
 export const updateUserThunk = async (url, user, thunkAPI) => {
   try {
-    const resp = await customFetch.patch(url, user, {
-      headers: {
-        authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-      },
-    });
+    const resp = await customFetch.patch(url, user);
     return resp.data;
   } catch (error) {
-    // console.log(error.response);
-    if (error.response.status === 401) {
-      thunkAPI.dispatch(logOutUser());
-      return thunkAPI.rejectWithValue("Unauthorized! Logging Out...");
-    }
-    return thunkAPI.rejectWithValue(error.response.data.msg);
+    return checkForUnauthorizedResponse(error, thunkAPI);
   }
 };
 
-
-
-
 export const clearStoreThunk = async (message, thunkAPI) => {
   try {
-    // logout user
     thunkAPI.dispatch(logOutUser(message));
-    // clear jobs value
     thunkAPI.dispatch(clearAllJobsState());
-    // clear job input values
     thunkAPI.dispatch(clearValues());
     return Promise.resolve();
   } catch (error) {
-    // console.log(error);
     return Promise.reject();
   }
 };

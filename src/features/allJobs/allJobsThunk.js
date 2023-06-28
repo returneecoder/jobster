@@ -12,7 +12,7 @@ export const getAllJobsThunk = async (_, thunkAPI) => {
     const resp = await customFetch.get(url);
     return resp.data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.msg);
+    return checkForUnauthorizedResponse(error, thunkAPI);
     }
   }
 
@@ -24,7 +24,7 @@ export const showStatsThunk = async (_, thunkAPI) => {
 console.log(resp.data)
     return resp.data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.msg);
+    return checkForUnauthorizedResponse(error, thunkAPI);
     }
   }
 
